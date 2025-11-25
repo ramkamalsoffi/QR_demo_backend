@@ -1,14 +1,40 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-// Add your models here
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  batchNo     String   @unique // Batch number for the product
+  pdfUrl      String?  // S3 URL for PDF - PDFs stored only in S3
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
+  @@index([name])
+  @@map("products")
+}
+
+model Customer {
+  id          String   @id @default(uuid())
+  email       String
+  batchNo     String
+  ipAddress   String
+  device      String?
+  os          String?
+  location    String?
+  browser     String?
+  submittedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+  @@index([batchNo])
+  @@map("customers")
+}
